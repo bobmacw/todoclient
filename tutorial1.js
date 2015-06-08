@@ -7,14 +7,14 @@
 var data = [
     {author: "Pete Hunt", text: "This is one comment"},
     {author: "Jordan Walke", text: "This is *another* comment"}
-]
+];
 
 var CommentList = React.createClass({
     render: function() {
-        var commentNodes = this.props.data.map( function(comment) {
+        var commentNodes = this.props.data.map(function(comment) {
             return (
                 <Comment author = {comment.author}>
-                    {comment.txt}
+                    {comment.text}
                  </Comment>
             );
         });
@@ -65,6 +65,7 @@ var Comment = React.createClass({
 });
 
 React.render(
-    <CommentBox data = {data} />,
+//    <CommentBox url = "comments.json" />,
+    <CommentBox data={data} />,
     document.getElementById('content')
 );
