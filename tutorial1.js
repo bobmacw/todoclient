@@ -65,7 +65,7 @@ var Comment = React.createClass({
 });
 
 React.render(
-//    <CommentBox url = "comments.json" />,
-    <CommentBox data={data} />,
+    <CommentBox url = "~/src/react-tutorial/comments.json" />,
+//    <CommentBox data={data} />,
     document.getElementById('content')
 );
