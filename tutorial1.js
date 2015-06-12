@@ -39,11 +39,27 @@ var CommentForm = React.createClass({
 
 
 var CommentBox = React.createClass({
+    getInitialState: function() {
+        return {data: []};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     render: function() {
         return (
             <div className="commentBox">
                 <h1> -- COMMENTS -- </h1>
-                <CommentList data = {this.props.data} />
+                <CommentList data = {this.state.data} />
                 <CommentForm />
             </div>
         );
@@ -65,7 +81,7 @@ var Comment = React.createClass({
 });
 
 React.render(
-    <CommentBox url = "~/src/react-tutorial/comments.json" />,
+    <CommentBox url = 'comments.json' />,
 //    <CommentBox data={data} />,
     document.getElementById('content')
 );
