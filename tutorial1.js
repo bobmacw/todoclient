@@ -30,12 +30,14 @@ var CommentList = React.createClass({
 var CommentForm = React.createClass({
     render: function() {
         return (
-            <div className="commentForm">
-                Hello, React world - I am a CommentForm!
-            </div>
+            <form className="commentForm">
+                <input type="text" placeholder="Yourn name" />
+                <input type="text" placeholder="Say something..." />
+                <input type="submit" value="Post" />
+            </form>
         );
     }
-})
+});
 
 
 var CommentBox = React.createClass({
