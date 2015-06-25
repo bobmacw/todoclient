@@ -35,7 +35,7 @@ var CommentForm = React.createClass({
         if (!text || !author) {
             return;
         }
-//        this.props.onCommentSubmit({author: author, text: text});
+        this.props.onCommentSubmit({author: author, text: text});
         this.refs.author.getDOMNode().value = '';
         this.refs.text.getDOMNode().value = '';
     },
@@ -52,13 +52,6 @@ var CommentForm = React.createClass({
 
 
 var CommentBox = React.createClass({
-    getInitialState: function() {
-        return {data: []};
-    },
-    componentDidMount: function() {
-        this.loadCommentsFromServer();
-//        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
-    },
     loadCommentsFromServer: function() {
         $.ajax({
             url: this.props.url,
@@ -72,12 +65,33 @@ var CommentBox = React.createClass({
             }.bind(this)
         });
     },
+    handleCommentSubmit: function(comment) {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'POST',
+            data: comment,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    getInitialState: function() {
+        return {data: []};
+    },
+    componentDidMount: function() {
+        this.loadCommentsFromServer();
+        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    },
     render: function() {
         return (
             <div className="commentBox">
                 <h1> -- COMMENTS -- </h1>
                 <CommentList data = {this.state.data} />
-                <CommentForm />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
         );
     }
