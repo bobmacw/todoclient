@@ -4,10 +4,6 @@
 
 // tutorial1
 
-var data = [
-    {author: "Pete Hunt", text: "This is one comment"},
-    {author: "Jordan Walke", text: "This is *another* comment"}
-];
 
 var CommentList = React.createClass({
     render: function() {
