@@ -3,7 +3,65 @@
  */
 
 // tutorial1
+//var fetch = require('whatwg-fetch');
 
+
+var CommentBox = React.createClass({
+    loadCommentsFromServer: function() {
+        fetch('http://playground.com:8080/items')
+            .then(function(json) {
+                console.log('parsed json', json)
+            }).catch(function(ex) {
+                console.log('parsing failed', ex)
+            })
+
+
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    handleCommentSubmit: function(comment) {
+        var comments = this.state.data;
+        var newComments = comments.concat([comment]);
+        this.setState({data: newComments});
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'POST',
+            data: comment,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    getInitialState: function() {
+        return {data: []};
+    },
+    componentDidMount: function() {
+        this.loadCommentsFromServer();
+//        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    },
+    render: function() {
+        return (
+            <div className="commentBox">
+                <h1> -- COMMENTS -- </h1>
+                <CommentList data = {this.state.data} />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+            </div>
+        );
+    }
+});
 
 var CommentList = React.createClass({
     render: function() {
@@ -47,55 +105,6 @@ var CommentForm = React.createClass({
 });
 
 
-var CommentBox = React.createClass({
-    loadCommentsFromServer: function() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    handleCommentSubmit: function(comment) {
-        var comments = this.state.data;
-        var newComments = comments.concat([comment]);
-        this.setState({data: newComments});
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            type: 'POST',
-            data: comment,
-            success: function(data) {
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    getInitialState: function() {
-        return {data: []};
-    },
-    componentDidMount: function() {
-        this.loadCommentsFromServer();
-        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
-    },
-    render: function() {
-        return (
-            <div className="commentBox">
-                <h1> -- COMMENTS -- </h1>
-                <CommentList data = {this.state.data} />
-                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
-            </div>
-        );
-    }
-});
-
 var Comment = React.createClass({
     render: function() {
         var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
@@ -111,7 +120,8 @@ var Comment = React.createClass({
 });
 
 React.render(
-    <CommentBox url='comments.json' pollInterval={2000} />,
-//    <CommentBox data={data} />,
+//    <CommentBox url='comments.json' pollInterval={2000} />,
+    <CommentBox url='comments.json'  />,
+//    <CommentBox data={data} />,poll
     document.getElementById('content')
 );
