@@ -8,12 +8,13 @@
 
 var CommentBox = React.createClass({
     loadCommentsFromServer: function() {
-        fetch('http://playground.com:8080/api/items')
+        fetch(this.props.url)
             .then(function(response) {
                 return response.json();
             })
             .then(function(j) {
-                console.log('parsed json', j)
+                console.log('parsed json', j);
+//                this.setState({data: j});
             }).catch(function(ex) {
                 console.log('parsing failed', ex)
             })
@@ -125,7 +126,7 @@ var Comment = React.createClass({
 
 React.render(
 //    <CommentBox url='comments.json' pollInterval={2000} />,
-    <CommentBox url='comments.json'  />,
+    <CommentBox url='http://playground.com:8080/api/items'  />,
 //    <CommentBox data={data} />,poll
     document.getElementById('content')
 );
