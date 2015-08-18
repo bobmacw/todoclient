@@ -8,13 +8,14 @@
 
 var CommentBox = React.createClass({
     loadCommentsFromServer: function() {
+        var me = this;
         fetch(this.props.url)
             .then(function(response) {
                 return response.json();
             })
             .then(function(j) {
-                console.log('parsed json', j);
-//                this.setState({data: j});
+//                console.log('parsed json', j)
+                me.setState({data: j})
             }).catch(function(ex) {
                 console.log('parsing failed', ex)
             })
@@ -60,7 +61,7 @@ var CommentBox = React.createClass({
     render: function() {
         return (
             <div className="commentBox">
-                <h1> -- COMMENTS -- </h1>
+                <h1> -- Things To Do -- </h1>
                 <CommentList data = {this.state.data} />
                 <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
@@ -72,8 +73,9 @@ var CommentList = React.createClass({
     render: function() {
         var commentNodes = this.props.data.map(function(comment) {
             return (
-                <Comment author = {comment.author}>
-                    {comment.text}
+                <Comment summary = {comment.summary}>
+                    {comment.detail}
+                    {comment.status}
                  </Comment>
             );
         });
@@ -89,20 +91,23 @@ var CommentList = React.createClass({
 var CommentForm = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
-        var author = this.refs.author.getDOMNode().value.trim();
-        var text = this.refs.text.getDOMNode().value.trim();
-        if (!text || !author) {
+        var summary = this.refs.author.getDOMNode().value.trim();
+        var detail = this.refs.detail.getDOMNode().value.trim();
+        var status = this.refs.status.getDOMNode().value.trim();
+        if (!detail || !summary) {
             return;
         }
-        this.props.onCommentSubmit({author: author, text: text});
-        this.refs.author.getDOMNode().value = '';
-        this.refs.text.getDOMNode().value = '';
+        this.props.onCommentSubmit({summary: summary, detail: detail, status: status});
+        this.refs.summary.getDOMNode().value = '';
+        this.refs.detail.getDOMNode().value = '';
+        this.refs.status.getDOMNode().value = '';
     },
     render: function() {
         return (
             <form className="commentForm" onSubmit={this.handleSubmit}>
-                <input ref = "author" type="text" placeholder="Your name" />
-                <input ref = "text" type="text" placeholder="Say something" />
+                <input ref = "summary" type="text" placeholder="Task summary" />
+                <input ref = "detail" type="text" placeholder="Task details" />
+                <input ref = "status" type="text" placeholder="Task status" />
                 <input type="submit" value="Post" />
             </form>
         );
@@ -115,8 +120,14 @@ var Comment = React.createClass({
         var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
         return (
             <div className="comment">
-                <h2 className="commentAuthor">
-                    {this.props.author}
+                <h2 className="commentSummary">
+                    {this.props.summary}
+                </h2>
+                <h2 className="commentDetail">
+                    {this.props.detail}
+                </h2>
+                <h2 className="commentStatus">
+                    {this.props.status}
                 </h2>
                 <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
             </div>
