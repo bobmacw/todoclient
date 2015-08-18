@@ -8,14 +8,17 @@
 
 var CommentBox = React.createClass({
     loadCommentsFromServer: function() {
-        fetch('http://playground.com:8080/items')
-            .then(function(json) {
-                console.log('parsed json', json)
+        fetch('http://playground.com:8080/api/items')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(j) {
+                console.log('parsed json', j)
             }).catch(function(ex) {
                 console.log('parsing failed', ex)
             })
 
-
+/*
         $.ajax({
             url: this.props.url,
             dataType: 'json',
@@ -27,6 +30,7 @@ var CommentBox = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
+ */
     },
     handleCommentSubmit: function(comment) {
         var comments = this.state.data;
