@@ -38,6 +38,13 @@ var CommentBox = React.createClass({
         var comments = this.state.data;
         var newComments = comments.concat([comment]);
         this.setState({data: newComments});
+
+        console.log('posting new comment: ', comment);
+        fetch(this.props.url, {
+            method: 'post',
+            body: JSON.stringify({comment})
+        });
+/*
         $.ajax({
             url: this.props.url,
             dataType: 'json',
@@ -50,6 +57,7 @@ var CommentBox = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
+*/
     },
     getInitialState: function() {
         return {data: []};
@@ -73,7 +81,9 @@ var CommentList = React.createClass({
     render: function() {
         var commentNodes = this.props.data.map(function(comment) {
             return (
-                <Comment summary = {comment.summary}>
+//                <Comment summary = {comment.summary}>
+                <Comment >
+                    {comment.summary}
                     {comment.detail}
                     {comment.status}
                  </Comment>
@@ -91,7 +101,7 @@ var CommentList = React.createClass({
 var CommentForm = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
-        var summary = this.refs.author.getDOMNode().value.trim();
+        var summary = this.refs.summary.getDOMNode().value.trim();
         var detail = this.refs.detail.getDOMNode().value.trim();
         var status = this.refs.status.getDOMNode().value.trim();
         if (!detail || !summary) {
