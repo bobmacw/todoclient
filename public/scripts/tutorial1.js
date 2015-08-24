@@ -6,8 +6,8 @@
 //var fetch = require('whatwg-fetch');
 
 
-var CommentBox = React.createClass({
-    loadCommentsFromServer: function() {
+var TaskBox = React.createClass({
+    loadTasksFromServer: function() {
         var me = this;
         fetch(this.props.url)
             .then(function(response) {
@@ -19,86 +19,57 @@ var CommentBox = React.createClass({
             }).catch(function(ex) {
                 console.log('parsing failed', ex)
             })
-
-/*
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
- */
     },
-    handleCommentSubmit: function(comment) {
-        var comments = this.state.data;
-        var newComments = comments.concat([comment]);
-        this.setState({data: newComments});
+    handleTaskSubmit: function(task) {
+        var tasks = this.state.data;
+        var newTasks = tasks.concat([task]);
+        this.setState({data: newTasks});
 
-        console.log('posting new comment: ', comment);
+        console.log('posting new task: ', task);
         fetch(this.props.url, {
             method: 'post',
-            body: JSON.stringify({comment})
+            body: JSON.stringify({task})
         });
-/*
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            type: 'POST',
-            data: comment,
-            success: function(data) {
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-*/
     },
     getInitialState: function() {
         return {data: []};
     },
     componentDidMount: function() {
-        this.loadCommentsFromServer();
-//        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+        this.loadTasksFromServer();
+//        setInterval(this.loadTasksFromServer, this.props.pollInterval);
     },
     render: function() {
         return (
-            <div className="commentBox">
+            <div className="taskBox">
                 <h1> -- Things To Do -- </h1>
-                <CommentList data = {this.state.data} />
-                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+                <TaskList data = {this.state.data} />
+                <TaskForm onTaskSubmit={this.handleTaskSubmit} />
             </div>
         );
     }
 });
 
-var CommentList = React.createClass({
+var TaskList = React.createClass({
     render: function() {
-        var commentNodes = this.props.data.map(function(comment) {
+        var taskNodes = this.props.data.map(function(task) {
             return (
-//                <Comment summary = {comment.summary}>
-                <Comment >
-                    {comment.summary}
-                    {comment.detail}
-                    {comment.status}
-                 </Comment>
+                <Task >
+                    {task.summary}
+                    {task.detail}
+                    {task.status}
+                 </Task>
             );
         });
 
         return (
-            <div className="commentList">
-                {commentNodes}
+            <div className="taskList">
+                {taskNodes}
             </div>
         );
     }
 });
 
-var CommentForm = React.createClass({
+var TaskForm = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
         var summary = this.refs.summary.getDOMNode().value.trim();
@@ -107,14 +78,14 @@ var CommentForm = React.createClass({
         if (!detail || !summary) {
             return;
         }
-        this.props.onCommentSubmit({summary: summary, detail: detail, status: status});
+        this.props.onTaskSubmit({summary: summary, detail: detail, status: status});
         this.refs.summary.getDOMNode().value = '';
         this.refs.detail.getDOMNode().value = '';
         this.refs.status.getDOMNode().value = '';
     },
     render: function() {
         return (
-            <form className="commentForm" onSubmit={this.handleSubmit}>
+            <form className="taskForm" onSubmit={this.handleSubmit}>
                 <input ref = "summary" type="text" placeholder="Task summary" />
                 <input ref = "detail" type="text" placeholder="Task details" />
                 <input ref = "status" type="text" placeholder="Task status" />
@@ -125,18 +96,18 @@ var CommentForm = React.createClass({
 });
 
 
-var Comment = React.createClass({
+var Task = React.createClass({
     render: function() {
         var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
         return (
-            <div className="comment">
-                <h2 className="commentSummary">
+            <div className="task">
+                <h2 className="taskSummary">
                     {this.props.summary}
                 </h2>
-                <h2 className="commentDetail">
+                <h2 className="taskDetail">
                     {this.props.detail}
                 </h2>
-                <h2 className="commentStatus">
+                <h2 className="taskStatus">
                     {this.props.status}
                 </h2>
                 <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
@@ -146,8 +117,8 @@ var Comment = React.createClass({
 });
 
 React.render(
-//    <CommentBox url='comments.json' pollInterval={2000} />,
-    <CommentBox url='http://playground.com:8080/api/items'  />,
-//    <CommentBox data={data} />,poll
+//    <TaskBox url='comments.json' pollInterval={2000} />,
+    <TaskBox url='http://playground.com:8080/api/items'  />,
+//    <TaskBox data={data} />,poll
     document.getElementById('content')
 );
