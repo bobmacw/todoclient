@@ -26,9 +26,19 @@ var TaskBox = React.createClass({
         this.setState({data: newTasks});
 
         console.log('posting new task: ', task);
+        var jTask = JSON.stringify({
+            summary: task.summary,
+            detail: task.detail,
+            status: task.status
+        });
+        console.log('modified task: ' + jTask)
         fetch(this.props.url, {
             method: 'post',
-            body: JSON.stringify({task})
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: jTask
         });
     },
     getInitialState: function() {
@@ -78,7 +88,7 @@ var TaskForm = React.createClass({
         if (!detail || !summary) {
             return;
         }
-        this.props.onTaskSubmit({summary: summary, detail: detail, status: status});
+        this.props.onTaskSubmit({summary: summary, detail: detail, state: status});
         this.refs.summary.getDOMNode().value = '';
         this.refs.detail.getDOMNode().value = '';
         this.refs.status.getDOMNode().value = '';
