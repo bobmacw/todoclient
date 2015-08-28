@@ -88,7 +88,7 @@ var TaskForm = React.createClass({
         if (!detail || !summary) {
             return;
         }
-        this.props.onTaskSubmit({summary: summary, detail: detail, state: status});
+        this.props.onTaskSubmit({summary: summary, detail: detail, status: status});
         this.refs.summary.getDOMNode().value = '';
         this.refs.detail.getDOMNode().value = '';
         this.refs.status.getDOMNode().value = '';
